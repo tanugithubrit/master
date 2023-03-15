@@ -1,0 +1,218 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ContactFormServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ai.lentra.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ContactFormServiceImpl (ai.lentra.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ContactFormServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/4)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/38)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ai.lentra.service;
+&nbsp;
+&nbsp;import ai.lentra.dto.contact_info.ContactDetailsDTO;
+&nbsp;import ai.lentra.dto.responses.ResponseDTO;
+&nbsp;import ai.lentra.dto.responses.ResponseDataDTO;
+&nbsp;import ai.lentra.exceptions.DuplicateResourceException;
+&nbsp;import ai.lentra.exceptions.ResourceNotFoundException;
+&nbsp;import ai.lentra.modal.contact_info.ContactDetails;
+&nbsp;import ai.lentra.repository.ContactFormRepository;
+&nbsp;import com.fasterxml.jackson.databind.ObjectMapper;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import java.util.Optional;
+&nbsp;
+&nbsp;import static ai.lentra.commons.ResponeGen.getResponse;
+&nbsp;
+&nbsp;@Service
+<b class="nc">&nbsp;public class ContactFormServiceImpl implements ContactFormService{</b>
+&nbsp;    @Autowired
+&nbsp;    ContactFormRepository repository;
+&nbsp;
+&nbsp;
+&nbsp;    public ResponseEntity&lt;Object&gt; getByApplicantId(Long applicantId) {
+<b class="nc">&nbsp;        ContactDetails contactDetails = repository.findByApplicantId(applicantId);</b>
+<b class="nc">&nbsp;        return (contactDetails == null ? ResponseEntity.status(HttpStatus.NOT_FOUND).body(getResponse(404,&quot;Contact Details Not Found for Applicant &quot; + applicantId,&quot;ERROR&quot;)) : ResponseEntity.status(HttpStatus.OK).body(contactDetails));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseEntity&lt;ResponseDTO&gt; addContactForm(ContactDetailsDTO contactDetails, Long applicantId) throws ResourceNotFoundException, DuplicateResourceException {
+<b class="nc">&nbsp;        contactDetails.setApplicantId(applicantId);</b>
+<b class="nc">&nbsp;        ObjectMapper objectMapper = new ObjectMapper();</b>
+<b class="nc">&nbsp;        ContactDetails contactDetails_o = objectMapper.convertValue(contactDetails, ContactDetails.class);</b>
+&nbsp;
+<b class="nc">&nbsp;        ContactDetails byApplicantId = repository.findByApplicantId(contactDetails_o.getApplicantId());</b>
+<b class="nc">&nbsp;        if (byApplicantId != null)</b>
+&nbsp;        {
+<b class="nc">&nbsp;           throw new DuplicateResourceException(&quot;ContactDetails for the applicant is already exists&quot;);</b>
+&nbsp;        }
+&nbsp;        try{
+<b class="nc">&nbsp;            repository.save(contactDetails_o);</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.CREATED).body(getResponse(201,&quot;Contact Details for the applicant has been added successfully &quot;,&quot;CREATED&quot;));</b>
+<b class="nc">&nbsp;        } catch (Exception e) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(getResponse(500,&quot;error while adding contact details for the applicant &quot;,&quot;ERROR&quot;));</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;@Override
+&nbsp;    public ResponseEntity&lt;ResponseDTO&gt; updateContactDetails(ContactDetailsDTO contactDetailsDTO, Long applicantId) {
+<b class="nc">&nbsp;        Optional&lt;ContactDetails&gt; optionalApplicant = Optional.ofNullable(repository.findByApplicantId(applicantId));</b>
+<b class="nc">&nbsp;        if (!optionalApplicant.isPresent()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(getResponse(404,&quot;Contact Details Not Found for Applicant :&quot;+applicantId,&quot;ERROR&quot;));</b>
+&nbsp;        }
+<b class="nc">&nbsp;        ContactDetails existingContact = optionalApplicant.get();</b>
+<b class="nc">&nbsp;        if (contactDetailsDTO.getMobileNumber() != null) {</b>
+<b class="nc">&nbsp;            existingContact.setMobileNumber(contactDetailsDTO.getMobileNumber());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (contactDetailsDTO.getPersonalEmail() != null) {</b>
+<b class="nc">&nbsp;            existingContact.setPersonalEmail(contactDetailsDTO.getPersonalEmail());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (contactDetailsDTO.getSimType() != null) {</b>
+<b class="nc">&nbsp;            existingContact.setSimType(contactDetailsDTO.getSimType());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        existingContact.setMobileNumberVerified(contactDetailsDTO.isMobileNumberVerified());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (contactDetailsDTO.isMobileNumberVerified() != existingContact.isMobileNumberVerified()) {</b>
+<b class="nc">&nbsp;            existingContact.setMobileNumberVerified(contactDetailsDTO.isMobileNumberVerified());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        if (contactDetailsDTO.getPhoneNumber() != null) {</b>
+<b class="nc">&nbsp;            existingContact.setPhoneNumber(contactDetailsDTO.getPhoneNumber());</b>
+&nbsp;        }
+<b class="nc">&nbsp;        existingContact.setPhoneNumberVerified(contactDetailsDTO.isPhoneNumberVerified());</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        existingContact.setPersonalEmailVerified(contactDetailsDTO.isPersonalEmailVerified());</b>
+&nbsp;
+&nbsp;//        if (contactDetails.isPersonalEmailVerified() != existingContact.isPersonalEmailVerified()) {
+&nbsp;//            existingContact.setPersonalEmailVerified(contactDetails.isPersonalEmailVerified());
+&nbsp;//        }
+<b class="nc">&nbsp;        existingContact.setContDomainCheck(contactDetailsDTO.isDomainCheck());</b>
+&nbsp;
+&nbsp;//        if (contactDetails.isDomainCheck() != existingContact.isDomainCheck()) {
+&nbsp;//            existingContact.setDomainCheck(contactDetails.isDomainCheck());
+&nbsp;//        }
+<b class="nc">&nbsp;        existingContact.setRegisteredWithBank(contactDetailsDTO.isRegisteredWithBank());</b>
+&nbsp;
+&nbsp;//        if (contactDetails.isRegisteredWithBank() != existingContact.isRegisteredWithBank()) {
+&nbsp;//            existingContact.setRegisteredWithBank(contactDetails.isRegisteredWithBank());
+&nbsp;//        }
+&nbsp;//Success Response
+&nbsp;//        ResponseDTO successResponseDTO=new ResponseDTO();
+&nbsp;//        successResponseDTO.setCode(HttpStatus.CREATED);
+&nbsp;//        successResponseDTO.setMessage(&quot;Contact Information Created   Successfully&quot;);
+&nbsp;//        successResponseDTO.setStatus(&quot;Created&quot;);
+&nbsp;//        //Error Response
+&nbsp;//        ResponseDTO errResponseDTO = new ResponseDTO();
+&nbsp;//        errResponseDTO.setCode(HttpStatus.NOT_FOUND);
+&nbsp;//        errResponseDTO.setMessage(&quot;Contact Information Not Updated&quot;);
+&nbsp;//        errResponseDTO.setStatus(&quot;Failed to Update&quot;);
+&nbsp;        try {
+<b class="nc">&nbsp;            repository.save(existingContact);</b>
+<b class="nc">&nbsp;        }catch (Exception e)</b>
+&nbsp;        {
+<b class="nc">&nbsp;            e.printStackTrace();</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(getResponse(400,&quot;Error while updating a contact details &quot;,&quot;ERROR&quot;));</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        return ResponseEntity.status(HttpStatus.OK).body(getResponse(200,&quot;Contact Details updated successfully&quot;,&quot;SUCCESS&quot;));</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-14 17:43</div>
+</div>
+</body>
+</html>

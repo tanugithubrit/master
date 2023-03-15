@@ -1,0 +1,82 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ContactFormService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ai.lentra.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ContactFormService (ai.lentra.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">ContactFormService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ai.lentra.service;
+&nbsp;
+&nbsp;import ai.lentra.dto.contact_info.ContactDetailsDTO;
+&nbsp;import ai.lentra.dto.responses.ResponseDTO;
+&nbsp;import ai.lentra.exceptions.DuplicateResourceException;
+&nbsp;import ai.lentra.exceptions.ResourceNotFoundException;
+&nbsp;import ai.lentra.modal.contact_info.ContactDetails;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;
+&nbsp;public interface ContactFormService {
+&nbsp;    public ResponseEntity&lt;Object&gt; getByApplicantId(Long applicantId);
+&nbsp;
+&nbsp;    public ResponseEntity&lt;ResponseDTO&gt; addContactForm(ContactDetailsDTO contactDetailsD, Long applicantId) throws ResourceNotFoundException, DuplicateResourceException;
+&nbsp;    public ResponseEntity&lt;ResponseDTO&gt; updateContactDetails(ContactDetailsDTO contactDetails, Long applicantId);
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-14 17:43</div>
+</div>
+</body>
+</html>

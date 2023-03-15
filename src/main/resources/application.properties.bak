@@ -1,0 +1,72 @@
+spring.profiles.default=dev
+
+service.name=leads
+server.port=8080
+server.servlet.context-path=/api/leads/v1
+
+#Add so that swagger-ui correctly uses https when hosted behind nginx avoiding cors errors
+#more details here : https://stackoverflow.com/a/59126519
+server.forward-headers-strategy=NATIVE
+
+##Performs flyway migrations on startup
+spring.flyway.enabled=false
+spring.flyway.outOfOrder=true
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.show-sql=false
+spring.jpa.generate-ddl=false
+
+# Prevent JPA from trying to Initialize...:
+spring.jpa.database=postgresql
+# ... and do not Auto-Detect the Database:
+spring.datasource.initialize=false
+# Prevent Hibernate from Automatic Changes to the DDL Schema:
+spring.jpa.hibernate.ddl-auto=none
+
+#enable monitoring through /actuator endpoints
+management.endpoints.web.exposure.include=health,prometheus
+
+#API docs has been integrated with spring-docs
+#Now we'll be able to access the docs at:
+#http://localhost:8080/api/docs/
+#The OpenAPI definitions are in JSON format by default. For yaml format, we can obtain the definitions at:
+#http://localhost:8080/api/docs.yaml
+#Swagger UI will be available at
+#http://localhost:8080/api/swagger-ui/index.html?configUrl=/api/docs/swagger-config#/
+springdoc.api-docs.path=/docs
+
+#enable for performance tests
+#spring.jpa.properties.hibernate.generate_statistics=true
+#logging.level.org.hibernate=INFO
+#logging.level.org.springframework.transaction.interceptor=TRACE
+
+#https://spring.io/guides/gs/uploading-files/#:~:text=servlet.-,multipart.,form%2Ddata%20cannot%20exceed%20128KB.
+#total file size cannot exceed given size.
+spring.servlet.multipart.max-file-size=100MB
+#total request size for a multipart/form-data cannot exceed
+spring.servlet.multipart.max-request-size=100MB
+
+##Database config
+multi_tenant_enabled=false
+
+#scm DB contains the information about multiple tenants this app can handle. Only used if multi_tenant_enabled=true
+scm_db_host=localhost
+scm_db_port=5432
+scm_db_name=scm_db
+scm_db_schema=scm_schema
+scm_db_username=scm_user
+scm_db_password=adept
+
+#the following config is only used if multi_tenant_enabled=false
+single.tenant.id=42
+single.tenant.datasource.host=localhost
+single.tenant.datasource.port=5432
+single.tenant.datasource.db=postgres
+single.tenant.datasource.schema=vms
+single.tenant.datasource.username=admin
+single.tenant.datasource.password=admin
+
+#Kafka config
+spring.kafka.bootstrap-servers=localhost:39092,localhost:29092
+kafka.topic.name.prefix=case_
+waitTimeOutForKafkaServerInSeconds=30
+case.management.generatecaseId.url=http://localhost:8089/api/cases/v1/case/data/generateId

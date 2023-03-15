@@ -1,0 +1,86 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > PersonalDetailService</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ai.lentra.service</a>
+</div>
+
+<h1>Coverage Summary for Class: PersonalDetailService (ai.lentra.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+</tr>
+<tr>
+  <td class="name">PersonalDetailService</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ai.lentra.service;
+&nbsp;
+&nbsp;import ai.lentra.dto.personal_info.PersonalDetailsDTO;
+&nbsp;import ai.lentra.exceptions.DuplicateResourceException;
+&nbsp;import ai.lentra.exceptions.InvalidInputException;
+&nbsp;import ai.lentra.exceptions.ResourceNotFoundException;
+&nbsp;import ai.lentra.modal.personal_info.PersonalDetails;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;
+&nbsp;public interface PersonalDetailService {
+&nbsp;    public ResponseEntity&lt;?&gt; addPersonalDetail(PersonalDetailsDTO personalDetailsDTO, Long applicantId) throws DuplicateResourceException, InvalidInputException;
+&nbsp;
+&nbsp;    ResponseEntity&lt;PersonalDetailsDTO&gt; getPersonalDetailByApplicantId(Long applicantId) throws ResourceNotFoundException;
+&nbsp;
+&nbsp;
+&nbsp;    ResponseEntity&lt;?&gt; updatePersonalDetail(PersonalDetailsDTO details, Long applicantId) throws ResourceNotFoundException;
+&nbsp;
+&nbsp;    ResponseEntity&lt;?&gt; getPersonalDetailByApplicantId(long applicantId) throws ResourceNotFoundException;
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-14 17:43</div>
+</div>
+</body>
+</html>

@@ -1,0 +1,239 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ExpensesServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ai.lentra.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ExpensesServiceImpl (ai.lentra.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ExpensesServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/61)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ai.lentra.service;
+&nbsp;
+&nbsp;import ai.lentra.controller.ValidationController;
+&nbsp;import ai.lentra.dto.ResponseDto;
+&nbsp;import ai.lentra.exceptions.CurrencyNotFoundException;
+&nbsp;import ai.lentra.exceptions.ResourceNotFoundException;
+&nbsp;
+&nbsp;import ai.lentra.modal.expenses.Expenses;
+&nbsp;import ai.lentra.repository.ExpensesRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import javax.transaction.Transactional;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.math.RoundingMode;
+&nbsp;import java.text.NumberFormat;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import static ai.lentra.commons.ErrorMessage.*;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+<b class="nc">&nbsp;public class ExpensesServiceImpl implements  ExpensesService{</b>
+<b class="nc">&nbsp;String errorMsg = &quot;&quot;;</b>
+&nbsp;    @Autowired
+&nbsp;    ValidationController validationController;
+&nbsp;    @Autowired
+&nbsp;    ExpensesRepository expensesRepository;
+&nbsp;    @Override
+&nbsp;    public List&lt;Expenses&gt; findAll() {
+<b class="nc">&nbsp;        return expensesRepository</b>
+<b class="nc">&nbsp;                .findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    public ResponseEntity&lt;?&gt; addExpense(Expenses expenses) throws CurrencyNotFoundException {
+&nbsp;
+<b class="nc">&nbsp;        Boolean checkValid =  checkValidations(expenses);</b>
+&nbsp;
+<b class="nc">&nbsp;        Expenses expenses1 =  calculateScore(expenses);</b>
+&nbsp;
+<b class="nc">&nbsp;if (checkValid) {</b>
+<b class="nc">&nbsp;    expensesRepository.save(expenses1);</b>
+&nbsp;}
+<b class="nc">&nbsp;         ResponseDto responseDTO=new ResponseDto();</b>
+<b class="nc">&nbsp;        responseDTO.setCode(HttpStatus.CREATED);</b>
+<b class="nc">&nbsp;        responseDTO.setMessage(&quot;Expenses Details Created Successfully&quot;);</b>
+<b class="nc">&nbsp;        responseDTO.setStatus(&quot;Created&quot;);</b>
+<b class="nc">&nbsp;        new ResponseEntity&lt;&gt;(HttpStatus.NO_CONTENT);</b>
+&nbsp;
+<b class="nc">&nbsp;        return  ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Boolean checkValidations(Expenses expenses) throws CurrencyNotFoundException{
+&nbsp;
+<b class="nc">&nbsp;        System.out.println(validationController.checkPresicion((expenses.getAvgFuelCost()))+&quot;  Precision Avg Cost&quot;);</b>
+<b class="nc">&nbsp;        System.out.println(validationController.checkPresicion(expenses.getAvgFuelCost())+&quot;  Precision Avg Cost&quot;);</b>
+<b class="nc">&nbsp;        System.out.println(NumberFormat.getCurrencyInstance().format(expenses.getAvgFuelCost()));</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        if (!validationController.checkCurrency(expenses.getAvgFuelCost())) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given fuel cost &quot; + expenses.getAvgFuelCost());</b>
+&nbsp;
+<b class="nc">&nbsp;        } else if (!validationController.checkCurrency(expenses.getBroadbandBillAmt())) {</b>
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given broadband bill &quot; + expenses.getBroadbandBillAmt());</b>
+&nbsp;
+<b class="nc">&nbsp;        }else if (!validationController.checkCurrency(expenses.getCableNetBillAmt())) {</b>
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given cable net bill  &quot; + expenses.getCableNetBillAmt());</b>
+&nbsp;
+&nbsp;        }else
+<b class="nc">&nbsp;        if (!validationController.checkCurrency(expenses.getCollegeFeesAmt()) ){</b>
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given college fees &quot; + expenses.getCollegeFeesAmt());</b>
+&nbsp;
+<b class="nc">&nbsp;        }else if (!validationController.checkCurrency(expenses.getElectricBillAmt()) ){</b>
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given electric bill &quot; + expenses.getElectricBillAmt());</b>
+&nbsp;
+&nbsp;        }else
+<b class="nc">&nbsp;        if (!validationController.checkCurrency(expenses.getSchoolFeesAmt()) ){</b>
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given school fees &quot; + expenses.getSchoolFeesAmt());</b>
+&nbsp;
+&nbsp;        }else
+<b class="nc">&nbsp;        if (!validationController.checkCurrency(expenses.getWaterBillAmt()) ){</b>
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given water bill &quot; + expenses.getWaterBillAmt());</b>
+&nbsp;
+&nbsp;        }else
+<b class="nc">&nbsp;        if (!validationController.checkCurrency(expenses.getOfficeTransportationCost()) ){</b>
+<b class="nc">&nbsp;            throw new CurrencyNotFoundException(INVALID_CURRENCY + &quot;for given transportation cost &quot; + expenses.getOfficeTransportationCost());</b>
+&nbsp;        }
+&nbsp;        else {
+<b class="nc">&nbsp;            return true;</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Expenses findExpenseByAppId(Integer appId) throws ResourceNotFoundException {
+&nbsp;
+<b class="nc">&nbsp;        return expensesRepository</b>
+<b class="nc">&nbsp;                .findByApplicantId(appId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(EXPENSES_NOT_FOUND + &quot; for given Id &quot; + appId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Expenses updateExpense(Expenses expensesNew, Expenses expenses) {
+<b class="nc">&nbsp;        if(expensesNew.getAvgFuelCost()!=null)</b>
+<b class="nc">&nbsp;        expenses.setAvgFuelCost(expensesNew.getAvgFuelCost());</b>
+<b class="nc">&nbsp;        if(expensesNew.getBroadbandBillAmt()!=null)</b>
+<b class="nc">&nbsp;        expenses.setBroadbandBillAmt(expensesNew.getBroadbandBillAmt());</b>
+<b class="nc">&nbsp;        if(expensesNew.getCableNetBillAmt()!=null)</b>
+<b class="nc">&nbsp;        expenses.setCableNetBillAmt(expensesNew.getCableNetBillAmt());</b>
+<b class="nc">&nbsp;        if(expensesNew.getCollegeFeesAmt()!=null)</b>
+<b class="nc">&nbsp;        expenses.setCollegeFeesAmt(expensesNew.getCollegeFeesAmt());</b>
+<b class="nc">&nbsp;        if(expensesNew.getElectricBillAmt()!=null)</b>
+<b class="nc">&nbsp;        expenses.setElectricBillAmt(expensesNew.getElectricBillAmt());</b>
+<b class="nc">&nbsp;        if(expensesNew.getOfficeTransportationCost()!=null)</b>
+<b class="nc">&nbsp;        expenses.setOfficeTransportationCost(expensesNew.getOfficeTransportationCost());</b>
+<b class="nc">&nbsp;        if(expensesNew.getWaterBillAmt()!=null)</b>
+<b class="nc">&nbsp;        expenses.setWaterBillAmt(expensesNew.getWaterBillAmt());</b>
+<b class="nc">&nbsp;        if(expensesNew.getSchoolFeesAmt()!=null)</b>
+<b class="nc">&nbsp;        expenses.setSchoolFeesAmt(expensesNew.getSchoolFeesAmt());</b>
+<b class="nc">&nbsp;        Expenses expenses1 =  calculateScore(expenses);</b>
+<b class="nc">&nbsp;        return expensesRepository.save(expenses1);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Expenses calculateScore(Expenses expenses){
+&nbsp;
+<b class="nc">&nbsp;       BigDecimal score = expenses.getAvgFuelCost().add(expenses.getBroadbandBillAmt()).add(expenses.getElectricBillAmt()).add(</b>
+<b class="nc">&nbsp;                expenses.getOtherExp()).add(expenses.getWaterBillAmt()).add(expenses.getBroadbandBillAmt()).add(</b>
+<b class="nc">&nbsp;                expenses.getCableNetBillAmt()).add(expenses.getCollegeFeesAmt()).add(expenses.getSchoolFeesAmt());</b>
+&nbsp;
+<b class="nc">&nbsp;        score = score.setScale(2, RoundingMode.HALF_UP);</b>
+<b class="nc">&nbsp;        expenses.setExpScore(score);</b>
+<b class="nc">&nbsp;        return expenses;</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-14 17:43</div>
+</div>
+</body>
+</html>

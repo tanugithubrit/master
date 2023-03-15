@@ -1,0 +1,267 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > ResidenceServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ai.lentra.service</a>
+</div>
+
+<h1>Coverage Summary for Class: ResidenceServiceImpl (ai.lentra.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">ResidenceServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/7)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/84)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ai.lentra.service;
+&nbsp;
+&nbsp;import ai.lentra.controller.ValidationController;
+&nbsp;import ai.lentra.dto.ResponseDto;
+&nbsp;import ai.lentra.exceptions.ResidenceException;
+&nbsp;import ai.lentra.exceptions.ResourceNotFoundException;
+&nbsp;
+&nbsp;import ai.lentra.modal.residence.ResidenceDetails;
+&nbsp;import ai.lentra.repository.ResidenceRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;
+&nbsp;import javax.persistence.EntityNotFoundException;
+&nbsp;import javax.transaction.Transactional;
+&nbsp;import java.math.BigDecimal;
+&nbsp;import java.util.List;
+&nbsp;
+&nbsp;import static ai.lentra.commons.ErrorMessage.*;
+&nbsp;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+<b class="nc">&nbsp;public class ResidenceServiceImpl implements ResidenceService{</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    ValidationController validationController;
+&nbsp;    @Autowired
+&nbsp;    ResidenceRepository residenceRepository;
+&nbsp;    @Override
+&nbsp;    public List&lt;ResidenceDetails&gt; findAll()  {
+<b class="nc">&nbsp;        return residenceRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResidenceDetails findResidenceByAppId(Long residenceId) throws ResourceNotFoundException {
+&nbsp;
+<b class="nc">&nbsp;        return residenceRepository</b>
+<b class="nc">&nbsp;                .findByAppId(residenceId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new ResourceNotFoundException(RESIDENCE_NOT_FOUND + &quot; for given Id &quot; + residenceId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResidenceDetails updateExpense(ResidenceDetails newResidence, ResidenceDetails ResidenceDetails) {
+&nbsp;
+<b class="nc">&nbsp;        ResidenceDetails.setAddressLine1(newResidence.getAddressLine1());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setAddressLine2(newResidence.getAddressLine2());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setAddressLine3(newResidence.getAddressLine3());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setAddressLine4(newResidence.getAddressLine4());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setAppliances(newResidence.getAppliances());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setCity(newResidence.getCity());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setResidenceType(newResidence.getResidenceType());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setClassification(newResidence.getClassification());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setResidenceCategory(newResidence.getResidenceCategory());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setResidenceLandmark(newResidence.getResidenceLandmark());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setResidenceType(newResidence.getResidenceType());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setAddressProofId(newResidence.getAddressProofId());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setAppliancesTotalValue(newResidence.getAppliancesTotalValue());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setCommunityDominated(newResidence.isCommunityDominated());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setCommuteOptions(newResidence.getCommuteOptions());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setYearsOfStay(newResidence.getYearsOfStay());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setCountry(newResidence.getCountry());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setCountry_code(newResidence.getCountry_code());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setDistanceFromAddressToActualLoaction(newResidence.getDistanceFromAddressToActualLoaction());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setHouseCondition(newResidence.getHouseCondition());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setLandlineNum(newResidence.getLandlineNum());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setLattitue(newResidence.getLattitue());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setLivingWIth(newResidence.getLivingWIth());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setLongitude(newResidence.getLongitude());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setMailDeliveryStatus(newResidence.isMailDeliveryStatus());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setMonthlyAmortization(newResidence.getMonthlyAmortization());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setMonthsOfStay(newResidence.getMonthsOfStay());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setMortagagorName(newResidence.getMortagagorName());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setNamePlateVisible(newResidence.isNamePlateVisible());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setResNegativeLocation(newResidence.isResNegativeLocation());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setNeighbourhoodType(newResidence.getNeighbourhoodType());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setResNoOfStorey(newResidence.getResNoOfStorey());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setOwnedBy(newResidence.getOwnedBy());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setOwnershipType(newResidence.getOwnershipType());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setPersMet(newResidence.getPersMet());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setPincode(newResidence.getPincode());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setPropertyInterior(newResidence.getPropertyInterior());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setPropertyMAkeType(newResidence.getPropertyMAkeType());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setRentedFrom(newResidence.getRentedFrom());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setRentPerMonth(newResidence.getRentPerMonth());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setResidency(newResidence.getResidency());</b>
+<b class="nc">&nbsp;        ResidenceDetails.setState(newResidence.getState());</b>
+&nbsp;//        ResidenceDetails.setScore(calculateScore(ResidenceDetails));
+<b class="nc">&nbsp;        residenceRepository.save(ResidenceDetails);</b>
+<b class="nc">&nbsp;        return ResidenceDetails;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public ResponseEntity&lt;?&gt; addExpense(ResidenceDetails ResidenceDetails) throws ResidenceException {
+&nbsp;
+<b class="nc">&nbsp;        ResidenceDetails.setResScore(calculateScore(ResidenceDetails));</b>
+<b class="nc">&nbsp;        checkValidations(ResidenceDetails);</b>
+<b class="nc">&nbsp;        residenceRepository.save(ResidenceDetails);</b>
+<b class="nc">&nbsp;        ResponseDto responseDTO=new ResponseDto();</b>
+<b class="nc">&nbsp;        responseDTO.setCode(HttpStatus.CREATED);</b>
+<b class="nc">&nbsp;        responseDTO.setMessage(&quot;ResidenceDetails Information Created Successfully&quot;);</b>
+<b class="nc">&nbsp;        responseDTO.setStatus(&quot;Created&quot;);</b>
+<b class="nc">&nbsp;        new ResponseEntity&lt;&gt;(HttpStatus.NO_CONTENT);</b>
+&nbsp;
+<b class="nc">&nbsp;        return  ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private BigDecimal calculateScore(ResidenceDetails ResidenceDetails){
+&nbsp;
+&nbsp;//        BigDecimal score = null;
+<b class="nc">&nbsp;        return BigDecimal.valueOf(ResidenceDetails.getResidenceCategory()).add(BigDecimal.valueOf(ResidenceDetails.getOwnershipType())).add(BigDecimal.valueOf(ResidenceDetails.getResidenceType())).add(BigDecimal.valueOf(ResidenceDetails.getResNoOfStorey())).add(</b>
+<b class="nc">&nbsp;                BigDecimal.valueOf( ResidenceDetails.getClassification())).add(BigDecimal.valueOf(ResidenceDetails.getHouseCondition())).add(BigDecimal.valueOf(ResidenceDetails.getPropertyAge())).add(BigDecimal.valueOf(ResidenceDetails.getPropertyMAkeType())).add(</b>
+<b class="nc">&nbsp;                BigDecimal.valueOf(ResidenceDetails.getPropertyInterior())).add(BigDecimal.valueOf(ResidenceDetails.getAppliances())).add(ResidenceDetails.getAppliancesTotalValue()).add(BigDecimal.valueOf(ResidenceDetails.getCommuteOptions())).add(</b>
+<b class="nc">&nbsp;                BigDecimal.valueOf(ResidenceDetails.getNeighbourhoodType())).add(BigDecimal.valueOf(ResidenceDetails.getResidency())).add(BigDecimal.valueOf(ResidenceDetails.getCountry())).add(BigDecimal.valueOf(ResidenceDetails.getYearsOfStay())).add(</b>
+<b class="nc">&nbsp;                BigDecimal.valueOf(ResidenceDetails.getMonthsOfStay())).add(BigDecimal.valueOf(ResidenceDetails.getDistanceFromAddressToActualLoaction())).add(ResidenceDetails.getMonthlyAmortization()).add(BigDecimal.valueOf(ResidenceDetails.getRentPerMonth()));</b>
+&nbsp;    }
+&nbsp;    private boolean checkValidations(ResidenceDetails ResidenceDetails )throws ResidenceException{
+<b class="nc">&nbsp;        if (ResidenceDetails.getAddressLine1()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for address line 1&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        }else if (ResidenceDetails.getAddressLine2()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for address line 2&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        }else if (ResidenceDetails.getAddressLine3()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for address line 3&quot;);</b>
+&nbsp;
+&nbsp;        }else
+<b class="nc">&nbsp;        if (ResidenceDetails.getAddressLine4()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for address line 4&quot;);</b>
+&nbsp;        }else
+<b class="nc">&nbsp;        if (ResidenceDetails.getCity()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for city&quot;);</b>
+&nbsp;        }else
+<b class="nc">&nbsp;        if (ResidenceDetails.getState()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for state&quot;);</b>
+<b class="nc">&nbsp;        }else if (ResidenceDetails.getPincode()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for pincode&quot;);</b>
+<b class="nc">&nbsp;        }else if (ResidenceDetails.getCountry_code()==null) {</b>
+&nbsp;
+<b class="nc">&nbsp;            throw new ResidenceException(&quot;Value required for country code&quot;);</b>
+&nbsp;
+<b class="nc">&nbsp;        }else if(!validationController.checkCurrency(ResidenceDetails.getAppliancesTotalValue()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            throw new ResidenceException(INVALID_CURRENCY + &quot;for given appliances total value &quot; + ResidenceDetails.getAppliancesTotalValue());</b>
+&nbsp;
+<b class="nc">&nbsp;        }else if(!validationController.checkCurrency(ResidenceDetails.getMonthlyAmortization()))</b>
+&nbsp;        {
+<b class="nc">&nbsp;            throw new ResidenceException(INVALID_CURRENCY + &quot;for given monthly amortization &quot; + ResidenceDetails.getMonthlyAmortization());</b>
+&nbsp;
+&nbsp;        }
+&nbsp;    else {
+<b class="nc">&nbsp;    return true;</b>
+&nbsp;        }
+&nbsp;
+&nbsp;        }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-14 17:43</div>
+</div>
+</body>
+</html>

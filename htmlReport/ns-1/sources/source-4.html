@@ -1,0 +1,375 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > FileUploadServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ai.lentra.service</a>
+</div>
+
+<h1>Coverage Summary for Class: FileUploadServiceImpl (ai.lentra.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">FileUploadServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/13)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/142)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ai.lentra.service;
+&nbsp;
+&nbsp;import ai.lentra.dto.responses.ResponseDTO;
+&nbsp;import ai.lentra.modal.file_upload.FileUpload;
+&nbsp;import ai.lentra.repository.FileUploadRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.core.io.ByteArrayResource;
+&nbsp;import org.springframework.core.io.FileSystemResource;
+&nbsp;import org.springframework.http.HttpHeaders;
+&nbsp;import org.springframework.http.HttpStatus;
+&nbsp;import org.springframework.http.MediaType;
+&nbsp;import org.springframework.http.ResponseEntity;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import org.springframework.util.StringUtils;
+&nbsp;import org.springframework.web.multipart.MultipartFile;
+&nbsp;
+&nbsp;import java.io.File;
+&nbsp;import java.io.FileOutputStream;
+&nbsp;import java.io.IOException;
+&nbsp;import java.nio.file.Files;
+&nbsp;import java.nio.file.Path;
+&nbsp;import java.nio.file.Paths;
+&nbsp;import java.time.Instant;
+&nbsp;import java.util.ArrayList;
+&nbsp;import java.util.Arrays;
+&nbsp;import java.util.List;
+&nbsp;import java.util.Objects;
+&nbsp;import java.util.stream.Collectors;
+&nbsp;import java.util.zip.Deflater;
+&nbsp;import java.util.zip.ZipEntry;
+&nbsp;import java.util.zip.ZipOutputStream;
+&nbsp;
+&nbsp;@Service
+<b class="nc">&nbsp;public class FileUploadServiceImpl implements FileUploadService{</b>
+&nbsp;
+&nbsp;//Defining the image    format  to be uploaded
+<b class="nc">&nbsp;    private static final List&lt;String&gt; ALLOWED_IMAGE_TYPES = Arrays.asList(&quot;jpeg&quot;, &quot;jpg&quot;, &quot;png&quot;, &quot;gif&quot;, &quot;tiff&quot;, &quot;bmp&quot;);</b>
+&nbsp;    //defining the video format to  be uploaded
+<b class="nc">&nbsp;    private static final List&lt;String&gt; ALLOWED_VIDEO_TYPES = Arrays.asList(&quot;mp4&quot;, &quot;mov&quot;, &quot;wmv&quot;, &quot;flv&quot;, &quot;avi&quot;, &quot;avchd&quot;);</b>
+&nbsp;//defining the document formats
+<b class="nc">&nbsp;    private static final List&lt;String&gt; ALLOWED_DOCUMENT_TYPES = Arrays.asList(&quot;pdf&quot;, &quot;xlsx&quot;, &quot;docx&quot;, &quot;rar&quot;);</b>
+&nbsp;
+&nbsp;
+&nbsp;    // setting up the max upload size
+&nbsp;    private static final long MAX_FILE_SIZE = 100 * 1024 * 1024; // 100 MB
+&nbsp;    @Autowired
+&nbsp;    private FileUploadRepository fileUploadRepository;
+&nbsp;
+&nbsp;
+&nbsp;
+&nbsp;    public ResponseEntity&lt;?&gt; uploadFilesOnline(Long applicantId, MultipartFile[] multipartFiles, String latitude, String longitude) {
+&nbsp;
+<b class="nc">&nbsp;        List&lt;String&gt; errorMessages = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;FileUpload&gt; fileUploads = Arrays.stream(multipartFiles)</b>
+<b class="nc">&nbsp;                .peek(file -&gt; {</b>
+<b class="nc">&nbsp;                    String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));</b>
+<b class="nc">&nbsp;                    String fileExtension = fileName.substring(fileName.lastIndexOf(&quot;.&quot;) + 1).toLowerCase();</b>
+&nbsp;
+&nbsp;                    // Check file type prevent the false file upload
+<b class="nc">&nbsp;                    if (!( ALLOWED_DOCUMENT_TYPES.contains(fileExtension) ||ALLOWED_IMAGE_TYPES.contains(fileExtension) || ALLOWED_VIDEO_TYPES.contains(fileExtension)) ) {</b>
+<b class="nc">&nbsp;                        System.out.println(fileExtension);</b>
+<b class="nc">&nbsp;                        errorMessages.add(fileName + &quot;: Only images allowed with the following extensions &quot;</b>
+<b class="nc">&nbsp;                                + StringUtils.arrayToCommaDelimitedString(</b>
+<b class="nc">&nbsp;                                ALLOWED_IMAGE_TYPES.toArray(new String[ALLOWED_IMAGE_TYPES.size()]))</b>
+&nbsp;                                + &quot;, Only Videos allowed with the following extensions &quot;
+<b class="nc">&nbsp;                                + StringUtils.arrayToCommaDelimitedString(</b>
+<b class="nc">&nbsp;                                ALLOWED_VIDEO_TYPES.toArray(new String[ALLOWED_VIDEO_TYPES.size()]))</b>
+&nbsp;                                + &quot;, Only Documents allowed with the following extensions &quot;
+<b class="nc">&nbsp;                                + StringUtils.arrayToCommaDelimitedString(</b>
+<b class="nc">&nbsp;                                ALLOWED_DOCUMENT_TYPES.toArray(new String[ALLOWED_DOCUMENT_TYPES.size()]))</b>
+&nbsp;                        );
+&nbsp;
+&nbsp;                    }
+&nbsp;
+&nbsp;                    // Check file size is not larger than MAX_FILE_SIZE (100MB)
+<b class="nc">&nbsp;                    if (file.getSize() &gt; MAX_FILE_SIZE) {</b>
+<b class="nc">&nbsp;                        errorMessages.add(fileName + &quot;: File size must be less than or equal to 100 MB&quot;);</b>
+&nbsp;                    }
+&nbsp;                })
+<b class="nc">&nbsp;                .filter(file -&gt; file.getSize() &lt;= MAX_FILE_SIZE)</b>
+<b class="nc">&nbsp;                .map(file -&gt; {</b>
+&nbsp;                    try {
+<b class="nc">&nbsp;                        FileUpload fileUpload = new FileUpload();</b>
+<b class="nc">&nbsp;                        fileUpload.setFilename(applicantId + &quot;_&quot; + file.getOriginalFilename());</b>
+<b class="nc">&nbsp;                        fileUpload.setData(file.getBytes());</b>
+<b class="nc">&nbsp;                        fileUpload.setContentType(file.getContentType());</b>
+<b class="nc">&nbsp;                        fileUpload.setApplicantId(applicantId);</b>
+<b class="nc">&nbsp;                        fileUpload.setLatitude(latitude);</b>
+<b class="nc">&nbsp;                        fileUpload.setLongitude(longitude);</b>
+<b class="nc">&nbsp;                        fileUpload.setTimestamp(Instant.now());</b>
+<b class="nc">&nbsp;                        return fileUpload;</b>
+<b class="nc">&nbsp;                    } catch (IOException e) {</b>
+<b class="nc">&nbsp;                        errorMessages.add(&quot;Error uploading file: &quot; + file.getOriginalFilename());</b>
+<b class="nc">&nbsp;                        return null;</b>
+&nbsp;                    }
+&nbsp;                })
+<b class="nc">&nbsp;                .filter(Objects::nonNull)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="nc">&nbsp;        if ((longitude == null &amp;&amp; latitude == null) || longitude == null || latitude == null) {</b>
+<b class="nc">&nbsp;            errorMessages.add(&quot;Location must be a valid latitude and longitude&quot;);</b>
+&nbsp;        }
+&nbsp;
+<b class="nc">&nbsp;        if (!errorMessages.isEmpty()) {</b>
+<b class="nc">&nbsp;            List&lt;ResponseDTO&gt; errros = errorMessages.stream().map(err -&gt; {</b>
+<b class="nc">&nbsp;                ResponseDTO response = new ResponseDTO();</b>
+<b class="nc">&nbsp;                response.setCode(HttpStatus.BAD_REQUEST);</b>
+<b class="nc">&nbsp;                response.setMessage(err);</b>
+<b class="nc">&nbsp;                response.setStatus(&quot;Upload Failed&quot;);</b>
+<b class="nc">&nbsp;                return response;</b>
+<b class="nc">&nbsp;            }).collect(Collectors.toList());</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errros);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            fileUploadRepository.saveAll(fileUploads);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;All files uploaded successfully along with the geoTag latitude: &quot; + latitude + &quot; longitude: &quot; + longitude);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;@Override
+&nbsp;    public ResponseEntity&lt;?&gt; downloadFile(Long applicantId) throws IOException {
+&nbsp;        // retrieve list of files from database
+<b class="nc">&nbsp;        List&lt;FileUpload&gt; files = fileUploadRepository.findByApplicantId(applicantId);</b>
+&nbsp;
+&nbsp;        // create a temporary file to hold the zip archive to avoid unecessary file closing
+<b class="nc">&nbsp;        File zipFile = File.createTempFile(&quot;files&quot;, &quot;.zip&quot;);</b>
+&nbsp;
+&nbsp;        // creating a new ZipOutputStream and open it
+<b class="nc">&nbsp;        ZipOutputStream zipOut = new ZipOutputStream(new FileOutputStream(zipFile));</b>
+<b class="nc">&nbsp;        zipOut.setLevel(Deflater.DEFAULT_COMPRESSION);</b>
+&nbsp;
+&nbsp;        // loop through each file, add it to the zip archive, and close the input stream
+<b class="nc">&nbsp;        for (FileUpload file : files) {</b>
+<b class="nc">&nbsp;            zipOut.putNextEntry(new ZipEntry(file.getFilename()));</b>
+<b class="nc">&nbsp;            zipOut.write(file.getData());</b>
+<b class="nc">&nbsp;            zipOut.closeEntry();</b>
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        if (zipOut!=null) {</b>
+<b class="nc">&nbsp;            zipOut.close();</b>
+&nbsp;        }
+&nbsp;        // close the zip output stream
+<b class="nc">&nbsp;        zipOut.close();</b>
+&nbsp;
+&nbsp;        // create a resource from the zip file and return it in a ResponseEntity
+<b class="nc">&nbsp;        FileSystemResource resource = new FileSystemResource(zipFile);</b>
+&nbsp;//        Headers for a Zip archive
+<b class="nc">&nbsp;        HttpHeaders headers = new HttpHeaders();</b>
+<b class="nc">&nbsp;        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);</b>
+<b class="nc">&nbsp;        headers.setContentDispositionFormData(&quot;attachment&quot;, &quot;files.zip&quot;);</b>
+<b class="nc">&nbsp;        if (files.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;No file for the specified applicant \n &quot;+&quot;applicant Id: &quot;+applicantId);</b>
+&nbsp;        }
+&nbsp;
+&nbsp;//returning the resource with custom content and custom headers for zip file format
+<b class="nc">&nbsp;        return ResponseEntity.ok()</b>
+<b class="nc">&nbsp;                .headers(headers)</b>
+<b class="nc">&nbsp;                .contentLength(resource.contentLength())</b>
+<b class="nc">&nbsp;                .contentType(MediaType.APPLICATION_OCTET_STREAM)</b>
+<b class="nc">&nbsp;                .body(resource);</b>
+&nbsp;
+&nbsp;
+&nbsp;    }
+&nbsp;    @Override
+&nbsp;    public ResponseEntity&lt;?&gt; getFilebyNameAndApplicantId(Long applicantId, String filename) throws IOException {
+<b class="nc">&nbsp;        List&lt;FileUpload&gt; files = fileUploadRepository.findByApplicantId(applicantId);</b>
+<b class="nc">&nbsp;        for (FileUpload file : files) {</b>
+<b class="nc">&nbsp;            System.out.println(file.getFilename());</b>
+<b class="nc">&nbsp;            MediaType mediaType = MediaType.valueOf(file.getContentType());</b>
+<b class="nc">&nbsp;            System.out.println(mediaType.getSubtype());</b>
+<b class="nc">&nbsp;        }</b>
+&nbsp;
+&nbsp;
+<b class="nc">&nbsp;        if (files.isEmpty()) {</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(&quot;No file present with name &quot; + filename +&quot; for the applicant &quot; +applicantId);</b>
+&nbsp;        }
+&nbsp;        byte[] data;
+<b class="nc">&nbsp;        File temp= new File(filename);</b>
+<b class="nc">&nbsp;        FileOutputStream fos = new FileOutputStream(temp);</b>
+<b class="nc">&nbsp;        for (FileUpload file : files) {</b>
+<b class="nc">&nbsp;            if (file.getFilename().contains(applicantId+&quot;_&quot;+filename)) {</b>
+<b class="nc">&nbsp;                fos.write(file.getData());</b>
+<b class="nc">&nbsp;                break;</b>
+&nbsp;            }
+<b class="nc">&nbsp;        }</b>
+<b class="nc">&nbsp;        fos.close();</b>
+<b class="nc">&nbsp;        Path path = Paths.get(temp.getAbsolutePath());</b>
+<b class="nc">&nbsp;        System.out.println(path);</b>
+<b class="nc">&nbsp;        ByteArrayResource resource = new ByteArrayResource(Files.readAllBytes(path));</b>
+<b class="nc">&nbsp;        HttpHeaders headers = new HttpHeaders();</b>
+<b class="nc">&nbsp;        headers.add(HttpHeaders.CONTENT_DISPOSITION, &quot;attachment;filename=&quot;+filename+&quot;_&quot;+applicantId);</b>
+<b class="nc">&nbsp;        headers.add(HttpHeaders.CONTENT_TYPE,MediaType.APPLICATION_JSON_VALUE);</b>
+<b class="nc">&nbsp;        headers.add(HttpHeaders.CONTENT_LENGTH, String.valueOf(temp.length()));</b>
+&nbsp;
+<b class="nc">&nbsp;        return ResponseEntity.ok()</b>
+<b class="nc">&nbsp;                .headers(headers)</b>
+<b class="nc">&nbsp;                .body(resource);</b>
+&nbsp;
+&nbsp;    }
+&nbsp;
+&nbsp;//to get file name extension
+&nbsp;    private String getFileExtension(String fileName) {
+<b class="nc">&nbsp;        int dotIndex = fileName.lastIndexOf(&#39;.&#39;);</b>
+<b class="nc">&nbsp;        if (dotIndex &lt; 0) {</b>
+<b class="nc">&nbsp;            return &quot;&quot;;</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            return fileName.substring(dotIndex + 1);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;
+&nbsp;@Override
+&nbsp;    public ResponseEntity&lt;?&gt; uploadFilesOffline(Long applicantId, MultipartFile[] files)
+&nbsp;    {
+&nbsp;
+<b class="nc">&nbsp;        List&lt;String&gt; errorMessages = new ArrayList&lt;&gt;();</b>
+&nbsp;
+<b class="nc">&nbsp;        List&lt;FileUpload&gt; fileUploads = Arrays.stream(files)</b>
+<b class="nc">&nbsp;                .peek(file -&gt; {</b>
+<b class="nc">&nbsp;                    String fileName = StringUtils.cleanPath(Objects.requireNonNull(file.getOriginalFilename()));</b>
+<b class="nc">&nbsp;                    String fileExtension = fileName.substring(fileName.lastIndexOf(&quot;.&quot;) + 1).toLowerCase();</b>
+&nbsp;
+&nbsp;                    // Check file type prevent the false file upload
+<b class="nc">&nbsp;                    if (!( ALLOWED_DOCUMENT_TYPES.contains(fileExtension) ||ALLOWED_IMAGE_TYPES.contains(fileExtension) || ALLOWED_VIDEO_TYPES.contains(fileExtension))) {</b>
+<b class="nc">&nbsp;                        errorMessages.add(fileName + &quot;: Only images allowed with the following extensions  &quot;</b>
+<b class="nc">&nbsp;                                + StringUtils.arrayToCommaDelimitedString(</b>
+<b class="nc">&nbsp;                                ALLOWED_IMAGE_TYPES.toArray(new String[ALLOWED_IMAGE_TYPES.size()]))</b>
+&nbsp;                                + &quot;, Only Videos allowed with the following extensions &quot;
+<b class="nc">&nbsp;                                + StringUtils.arrayToCommaDelimitedString(</b>
+<b class="nc">&nbsp;                                ALLOWED_VIDEO_TYPES.toArray(new String[ALLOWED_VIDEO_TYPES.size()]))</b>
+&nbsp;                                + &quot;, Only Documents allowed with the following extensions &quot;
+<b class="nc">&nbsp;                                + StringUtils.arrayToCommaDelimitedString(</b>
+<b class="nc">&nbsp;                                ALLOWED_DOCUMENT_TYPES.toArray(new String[ALLOWED_DOCUMENT_TYPES.size()]))</b>
+&nbsp;                        );
+&nbsp;                    }
+&nbsp;
+&nbsp;                    // Check file size is not larger than MAX_FILE_SIZE (100MB)
+<b class="nc">&nbsp;                    if (file.getSize() &gt; MAX_FILE_SIZE) {</b>
+<b class="nc">&nbsp;                        errorMessages.add(fileName + &quot;: File size must be less than or equal to 100 MB&quot;);</b>
+&nbsp;                    }
+&nbsp;                })
+<b class="nc">&nbsp;                .filter(file -&gt; file.getSize() &lt;= MAX_FILE_SIZE)</b>
+<b class="nc">&nbsp;                .map(file -&gt; {</b>
+&nbsp;                    try {
+<b class="nc">&nbsp;                        FileUpload fileUpload = new FileUpload();</b>
+<b class="nc">&nbsp;                        fileUpload.setFilename(applicantId + &quot;_&quot; + file.getOriginalFilename());</b>
+<b class="nc">&nbsp;                        fileUpload.setData(file.getBytes());</b>
+<b class="nc">&nbsp;                        fileUpload.setContentType(file.getContentType());</b>
+<b class="nc">&nbsp;                        fileUpload.setApplicantId(applicantId);</b>
+<b class="nc">&nbsp;                        fileUpload.setTimestamp(Instant.now());</b>
+<b class="nc">&nbsp;                        return fileUpload;</b>
+<b class="nc">&nbsp;                    } catch (IOException e) {</b>
+<b class="nc">&nbsp;                        errorMessages.add(&quot;Error uploading file: &quot; + file.getOriginalFilename());</b>
+<b class="nc">&nbsp;                        return null;</b>
+&nbsp;                    }
+&nbsp;                })
+<b class="nc">&nbsp;                .filter(Objects::nonNull)</b>
+<b class="nc">&nbsp;                .collect(Collectors.toList());</b>
+&nbsp;
+<b class="nc">&nbsp;        if (!errorMessages.isEmpty()) {</b>
+<b class="nc">&nbsp;            List&lt;ResponseDTO&gt; errors = errorMessages.stream().map(err -&gt; {</b>
+<b class="nc">&nbsp;                ResponseDTO response = new ResponseDTO();</b>
+<b class="nc">&nbsp;                response.setCode(HttpStatus.BAD_REQUEST);</b>
+<b class="nc">&nbsp;                response.setMessage(err);</b>
+<b class="nc">&nbsp;                response.setStatus(&quot;Upload Failed&quot;);</b>
+<b class="nc">&nbsp;                return response;</b>
+<b class="nc">&nbsp;            }).collect(Collectors.toList());</b>
+<b class="nc">&nbsp;            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errors);</b>
+&nbsp;        } else {
+<b class="nc">&nbsp;            fileUploadRepository.saveAll(fileUploads);</b>
+<b class="nc">&nbsp;            return ResponseEntity.ok(&quot;All files uploaded successfully &quot;);</b>
+&nbsp;        }
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-14 17:43</div>
+</div>
+</body>
+</html>

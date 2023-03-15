@@ -1,0 +1,162 @@
+
+
+
+<!DOCTYPE html>
+<html id="htmlId">
+<head>
+  <title>Coverage Report > SummaryServiceImpl</title>
+  <style type="text/css">
+    @import "../../css/coverage.css";
+    @import "../../css/idea.min.css";
+  </style>
+  <script type="text/javascript" src="../../js/highlight.min.js"></script>
+  <script type="text/javascript" src="../../js/highlightjs-line-numbers.min.js"></script>
+</head>
+
+<body>
+<div class="content">
+<div class="breadCrumbs">
+Current scope:     <a href="../../index.html">all classes</a>
+    <span class="separator">|</span>
+    <a href="../index.html">ai.lentra.service</a>
+</div>
+
+<h1>Coverage Summary for Class: SummaryServiceImpl (ai.lentra.service)</h1>
+
+<table class="coverageStats">
+<tr>
+  <th class="name">Class</th>
+<th class="coverageStat 
+">
+  Class, %
+</th>
+<th class="coverageStat 
+">
+  Method, %
+</th>
+<th class="coverageStat 
+">
+  Line, %
+</th>
+</tr>
+<tr>
+  <td class="name">SummaryServiceImpl</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/1)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/6)
+  </span>
+</td>
+<td class="coverageStat">
+  <span class="percent">
+    0%
+  </span>
+  <span class="absValue">
+    (0/20)
+  </span>
+</td>
+</tr>
+
+</table>
+
+<br/>
+<br/>
+
+
+<pre>
+<code class="sourceCode" id="sourceCode">&nbsp;package ai.lentra.service;
+&nbsp;
+&nbsp;
+&nbsp;import ai.lentra.modal.summary.Summary;
+&nbsp;import ai.lentra.repository.SummaryRepository;
+&nbsp;import org.springframework.beans.factory.annotation.Autowired;
+&nbsp;import org.springframework.stereotype.Service;
+&nbsp;import javax.persistence.EntityNotFoundException;
+&nbsp;import javax.transaction.Transactional;
+&nbsp;import java.util.List;
+&nbsp;import static ai.lentra.commons.ErrorMessage.SUMMARY_NOT_FOUND;
+&nbsp;
+&nbsp;
+&nbsp;@Service
+&nbsp;@Transactional
+<b class="nc">&nbsp;public class SummaryServiceImpl implements SummaryService{</b>
+&nbsp;
+&nbsp;    @Autowired
+&nbsp;    SummaryRepository summaryRepository;
+&nbsp;    @Override
+&nbsp;    public List&lt;Summary&gt; findAll() {
+<b class="nc">&nbsp;        return summaryRepository.findAll();</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public void addSummary(Summary summary) {
+&nbsp;
+<b class="nc">&nbsp;Integer score = calculateScore(summary);</b>
+<b class="nc">&nbsp;summary.setSumScore(score);</b>
+<b class="nc">&nbsp;        summaryRepository.save(summary);</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    private Integer calculateScore(Summary summary) {
+&nbsp;
+<b class="nc">&nbsp;        Integer score = summary.getFinalScore() +summary.getOtherFindings();</b>
+<b class="nc">&nbsp;        return  score;</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Summary findSummaryById(Long summaryId) {
+<b class="nc">&nbsp;        return summaryRepository</b>
+<b class="nc">&nbsp;                .findById(summaryId)</b>
+<b class="nc">&nbsp;                .orElseThrow(() -&gt; new EntityNotFoundException(SUMMARY_NOT_FOUND + &quot; for given Id &quot; + summaryId));</b>
+&nbsp;    }
+&nbsp;
+&nbsp;    @Override
+&nbsp;    public Summary updateService(Summary newSummary, Summary summary) {
+<b class="nc">&nbsp;        summary.setAgencyName(newSummary.getAgencyName());</b>
+<b class="nc">&nbsp;        summary.setFinalScore(newSummary.getFinalScore());</b>
+<b class="nc">&nbsp;        summary.setDateAndTimePerformed(newSummary.getDateAndTimePerformed());</b>
+<b class="nc">&nbsp;        summary.setRemark(newSummary.getRemark());</b>
+<b class="nc">&nbsp;        summary.setOtherFindings(newSummary.getOtherFindings());</b>
+<b class="nc">&nbsp;        summary.setPreparedBy(newSummary.getPreparedBy());</b>
+<b class="nc">&nbsp;        summary.setSumRefId(newSummary.getSumRefId());</b>
+<b class="nc">&nbsp;        summary.setRemarkDateTime(newSummary.getRemarkDateTime());</b>
+<b class="nc">&nbsp;        summary.setReviewedBy(newSummary.getReviewedBy());</b>
+<b class="nc">&nbsp;        return summaryRepository.save(summary);</b>
+&nbsp;    }
+&nbsp;}
+</code>
+</pre>
+</div>
+
+<script type="text/javascript">
+(function() {
+    var msie = false, msie9 = false;
+    /*@cc_on
+      msie = true;
+      @if (@_jscript_version >= 9)
+        msie9 = true;
+      @end
+    @*/
+
+    if (!msie || msie && msie9) {
+      hljs.highlightAll()
+      hljs.initLineNumbersOnLoad();
+    }
+})();
+</script>
+
+<div class="footer">
+    
+    <div style="float:right;">generated on 2023-03-14 17:43</div>
+</div>
+</body>
+</html>
