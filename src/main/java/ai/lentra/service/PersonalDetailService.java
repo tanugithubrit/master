@@ -15,5 +15,4 @@ public interface PersonalDetailService {
 
     ResponseEntity<?> updatePersonalDetail(PersonalDetailsDTO details, Long applicantId) throws ResourceNotFoundException;
 
-    ResponseEntity<?> getPersonalDetailByApplicantId(long applicantId) throws ResourceNotFoundException;
 }

@@ -59,6 +59,9 @@ public class VehicleDetailsServiceImpl {
             if (vehicleDetailsDTO.getBikeRegistrationNumber()!=0) {
                 rawVehicle.setBikeRegistrationNumber(vehicleDetailsDTO.getBikeRegistrationNumber());
             }
+            if (vehicleDetailsDTO.getBikeOwnershipType()!=null) {
+                rawVehicle.setBikeOwnershipType(vehicleDetailsDTO.getBikeOwnershipType());
+            }
             if (vehicleDetailsDTO.getManufactureYearCar() !=0) {
                 rawVehicle.setManufactureYearCar(vehicleDetailsDTO.getManufactureYearCar());
             }

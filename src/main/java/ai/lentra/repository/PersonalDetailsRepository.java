@@ -8,5 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 @Repository
 public interface PersonalDetailsRepository extends JpaRepository<PersonalDetails, Long> {
-    PersonalDetails findByApplicantId(long applicantId);
+    Optional<PersonalDetails> findByApplicantId(long applicantId);
+
+    boolean deleteByApplicantId(long i);
 }

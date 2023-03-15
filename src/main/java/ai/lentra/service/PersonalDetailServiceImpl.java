@@ -17,6 +17,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeParseException;
+import java.util.Optional;
 import java.util.Random;
 
 @Service
@@ -28,8 +29,8 @@ public class PersonalDetailServiceImpl implements PersonalDetailService {
 
     @Override
     public ResponseEntity<?> addPersonalDetail(PersonalDetailsDTO personalDetailsDTO, Long applicantId) throws DuplicateResourceException, InvalidInputException, DateTimeParseException {
-        PersonalDetails duplicateCheck = personalDetailsRepository.findByApplicantId(applicantId);
-        if (duplicateCheck!=null) {
+        Optional<PersonalDetails> duplicateCheck = personalDetailsRepository.findByApplicantId(applicantId);
+        if (!duplicateCheck.isEmpty()) {
             throw new DuplicateResourceException("Personal Details for the applicant is already present " + applicantId);
         }
 
@@ -59,7 +60,7 @@ public class PersonalDetailServiceImpl implements PersonalDetailService {
 
     @Override
     public ResponseEntity<PersonalDetailsDTO> getPersonalDetailByApplicantId(Long applicantId) throws ResourceNotFoundException {
-        PersonalDetails personalDetails = personalDetailsRepository.findByApplicantId(applicantId);
+        PersonalDetails personalDetails = personalDetailsRepository.findByApplicantId(applicantId).orElseThrow(()->new ResourceNotFoundException(RESOURCE_NOT_FOUND + applicantId));
         if (personalDetails==null){
             new ResourceNotFoundException(RESOURCE_NOT_FOUND + applicantId);
         }
@@ -70,10 +71,9 @@ public class PersonalDetailServiceImpl implements PersonalDetailService {
 
     @Override
     public ResponseEntity<ResponseDTO> updatePersonalDetail(PersonalDetailsDTO details, Long applicantId) throws ResourceNotFoundException {
-        PersonalDetails personalDetails = personalDetailsRepository.findByApplicantId(applicantId);
+        PersonalDetails personalDetails = personalDetailsRepository.findByApplicantId(applicantId).orElseThrow(()-> new ResourceNotFoundException(RESOURCE_NOT_FOUND + applicantId));
         ObjectMapper objectMapper = new ObjectMapper();
         PersonalDetails personalDetailsDTO = objectMapper.convertValue(details, PersonalDetails.class);
-        if (personalDetailsDTO != null) {
             if (personalDetailsDTO.getFirstName() != null) {
                 personalDetails.setFirstName(personalDetailsDTO.getFirstName());
             }
@@ -122,22 +122,13 @@ public class PersonalDetailServiceImpl implements PersonalDetailService {
             if (personalDetailsDTO.getSuffix() != null) {
                 personalDetails.setSuffix(personalDetailsDTO.getSuffix());
             }
-            personalDetailsRepository.save(personalDetailsDTO);
+            personalDetailsRepository.save(personalDetails);
             return ResponseEntity.status(HttpStatus.OK).body(getResponse(200, "PersonalDetails updated Successfully", "Success"));
-        } else {
-            throw new ResourceNotFoundException(RESOURCE_NOT_FOUND + applicantId);
-        }
+
     }
 
 
-    @Override
-    public ResponseEntity<?> getPersonalDetailByApplicantId(long applicantId) throws ResourceNotFoundException {
-        PersonalDetails personalDetails = personalDetailsRepository.findByApplicantId(applicantId);
-        if (personalDetails==null){
-            new ResourceNotFoundException(RESOURCE_NOT_FOUND + applicantId);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(personalDetails);
-    }
+
 
     public ResponseDTO getResponse(int code, String message, String status) {
         ResponseDTO responseDTO = new ResponseDTO();

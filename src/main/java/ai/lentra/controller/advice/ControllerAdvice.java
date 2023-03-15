@@ -59,7 +59,6 @@ public class ControllerAdvice {
     }
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public ResponseEntity<ResponseDTO> handleLeadingZeroParseError(HttpMessageNotReadableException exc) {
-        System.out.println(exc.getCause());
         ResponseDTO responseDTO = new ResponseDTO();
         responseDTO.setCode(HttpStatus.BAD_REQUEST);
         responseDTO.setStatus("Invalid Input");
